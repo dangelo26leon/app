@@ -1,4 +1,4 @@
-package com.jwt_security.app.dto;
+package com.project.app.dto;
 
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.jwt_security.app.config;
+package com.project.app.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +20,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class WebSecurityConfig {
 
-    private static final String[] WHITELIST_URLS = {"/auth/**"};
+    private static final String[] WHITELIST_URLS = {
+        "/auth/**",
+        "/api/categorias/**",
+        "/api/productos/**"
+    };
 
     @Autowired
     private UserDetailsService userDetailsService;

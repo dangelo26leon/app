@@ -1,4 +1,4 @@
-package com.jwt_security.app.config;
+package com.project.app.config;
 
 import java.util.Date;
 import java.util.Set;
@@ -8,7 +8,7 @@ import javax.crypto.SecretKey;
 
 import org.springframework.stereotype.Component;
 
-import com.jwt_security.app.models.Rol;
+import com.project.app.models.Rol;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

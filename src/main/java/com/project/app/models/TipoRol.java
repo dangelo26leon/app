@@ -1,4 +1,4 @@
-package com.jwt_security.app.models;
+package com.project.app.models;
 
 public enum TipoRol {
     USER("ROLE_USER"),

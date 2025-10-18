@@ -1,4 +1,4 @@
-package com.jwt_security.app.services;
+package com.project.app.services;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +10,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.jwt_security.app.config.JwtTokenService;
-import com.jwt_security.app.dto.LoginDto;
-import com.jwt_security.app.models.User;
-import com.jwt_security.app.repository.UserRepository;
+import com.project.app.config.JwtTokenService;
+import com.project.app.dto.LoginDto;
+import com.project.app.models.User;
+import com.project.app.repository.UserRepository;
 
 
 
@@ -49,6 +49,8 @@ public class UserServiceImpl implements UserService {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userRepository.findByUsername(userDetails.getUsername());
     }
+
+    
     
 
 }

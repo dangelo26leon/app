@@ -1,4 +1,4 @@
-package com.jwt_security.app.services;
+package com.project.app.services;
 
 import java.util.List;
 import java.util.Set;
@@ -11,9 +11,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import com.jwt_security.app.models.Rol;
-import com.jwt_security.app.models.User;
-import com.jwt_security.app.repository.UserRepository;
+import com.project.app.models.Rol;
+import com.project.app.models.User;
+import com.project.app.repository.UserRepository;
 
 @Component
 public class UserDetailsServiceImpl implements UserDetailsService {
