@@ -24,8 +24,9 @@ public class WebSecurityConfig {
         "/auth/**",
         "/api/categorias/**",
         "/api/productos/**",
-        "/api/categorias/**"
+        "/api/users/register"
     };
+
 
     @Autowired
     private UserDetailsService userDetailsService;
@@ -51,7 +52,7 @@ public class WebSecurityConfig {
     AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
+        provider.setPasswordEncoder(passwordEncoder());   
         return provider;
     }
 
@@ -60,7 +61,7 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    
+
 
 
 }
