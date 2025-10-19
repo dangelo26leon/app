@@ -23,7 +23,8 @@ public class WebSecurityConfig {
     private static final String[] WHITELIST_URLS = {
         "/auth/**",
         "/api/categorias/**",
-        "/api/productos/**"
+        "/api/productos/**",
+        "/api/categorias/**"
     };
 
     @Autowired
@@ -31,6 +32,7 @@ public class WebSecurityConfig {
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthFilter;
+    
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -57,4 +59,8 @@ public class WebSecurityConfig {
     public BCryptPasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
+    
+
+
 }

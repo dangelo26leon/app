@@ -25,36 +25,31 @@ public class CategoriaController {
     @Autowired
     private CategoriaService categoriaService;
 
-    // Obtener todas (Público, para listar el menú por categorías)
     @GetMapping
     public ResponseEntity<List<Categoria>> getAll() {
         return ResponseEntity.ok(categoriaService.findAll());
     }
 
-    // Obtener por ID (Público)
     @GetMapping("/{id}")
     public ResponseEntity<Categoria> getById(@PathVariable Long id) {
         return ResponseEntity.ok(categoriaService.findById(id));
     }
 
-    // Crear (Seguro: ADMIN o MANAGER)
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Categoria> create(@RequestBody Categoria categoria) {
         Categoria nuevaCategoria = categoriaService.save(categoria);
         return new ResponseEntity<>(nuevaCategoria, HttpStatus.CREATED);
     }
 
-    // Actualizar (Seguro: ADMIN o MANAGER)
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Categoria> update(@PathVariable Long id, @RequestBody Categoria categoriaDetalles) {
         Categoria categoriaActualizada = categoriaService.update(id, categoriaDetalles);
         return ResponseEntity.ok(categoriaActualizada);
     }
 
-    // Eliminar (Seguro: ADMIN o MANAGER)
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         categoriaService.delete(id);
