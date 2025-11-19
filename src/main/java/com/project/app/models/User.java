@@ -1,7 +1,7 @@
 package com.project.app.models;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -39,12 +39,8 @@ public class User {
     private String username;
 
     @Column(nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
-
-    @JsonIgnore
-    public String getPassword() {
-        return this.password;
-    }
 
     @Column(nullable = false)
     private String name;
