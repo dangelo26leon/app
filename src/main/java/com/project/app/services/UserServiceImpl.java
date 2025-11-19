@@ -1,8 +1,10 @@
 package com.project.app.services;
 
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -10,12 +12,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.project.app.config.JwtTokenService;
 import com.project.app.dto.LoginDto;
+import com.project.app.models.TipoRol;
 import com.project.app.models.User;
+import com.project.app.models.Rol;
+import com.project.app.repository.RolRepository;
 import com.project.app.repository.UserRepository;
 
 
@@ -24,10 +29,13 @@ import com.project.app.repository.UserRepository;
 public class UserServiceImpl implements UserService { 
 
     @Autowired
-    private BCryptPasswordEncoder bcryptEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RolRepository rolRepository;
 
     @Autowired
     private JwtTokenService jwtTokenService;
@@ -55,16 +63,31 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        Rol defaultRol = rolRepository.findByRol(TipoRol.USER)
+        .orElseThrow(() -> new RuntimeException("Error: Rol 'USER' no encontrado. Asegúrese de inicializar los roles."));
+        
+        Set<Rol> roles = new HashSet<>();
+        roles.add(defaultRol);
+        user.setRoles(roles);
+
         return userRepository.save(user);
     }
 
     @Override
     public User updateUser(User user) {
-        User existingUser = userRepository.findById(user.getId()).get();
+        User existingUser = userRepository.findById(user.getId()).orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + user.getId()));
+        
         existingUser.setUsername(user.getUsername());
-        existingUser.setPassword(user.getPassword());
         existingUser.setName(user.getName());
         existingUser.setEmail(user.getEmail());
+
+        //Encriptar la contraseña SOLO si se proporciona en la petición PUT
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
         User updateUser = userRepository.save(existingUser);
         return updateUser;
 

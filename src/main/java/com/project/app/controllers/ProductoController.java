@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.app.dto.ProductoRequest;
 import com.project.app.models.Producto;
 import com.project.app.services.ProductoService;
 
@@ -40,8 +41,8 @@ public class ProductoController {
     
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<Producto> crearProducto(@RequestBody Producto producto) {
-        Producto nuevoProducto = productoService.save(producto);
+    public ResponseEntity<Producto> crearProducto(@RequestBody ProductoRequest productoRequest) {
+        Producto nuevoProducto = productoService.save(productoRequest);
         org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
         headers.add("Message", "Creado correctamente");
         return new ResponseEntity<>(nuevoProducto, headers, HttpStatus.CREATED);
@@ -49,8 +50,8 @@ public class ProductoController {
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/{id}") 
-    public ResponseEntity<Producto> actualizarProducto(@PathVariable Long id, @RequestBody Producto productoDetalles) {
-        Producto productoActualizado = productoService.update(id, productoDetalles);
+    public ResponseEntity<Producto> actualizarProducto(@PathVariable Long id, @RequestBody ProductoRequest productoRequest) {
+        Producto productoActualizado = productoService.update(id, productoRequest);
         return ResponseEntity.ok(productoActualizado);
     }
     

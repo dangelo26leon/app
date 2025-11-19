@@ -39,8 +39,12 @@ public class User {
     private String username;
 
     @Column(nullable = false)
-    @JsonIgnore
     private String password;
+
+    @JsonIgnore
+    public String getPassword() {
+        return this.password;
+    }
 
     @Column(nullable = false)
     private String name;
