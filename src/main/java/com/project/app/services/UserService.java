@@ -3,10 +3,11 @@ package com.project.app.services;
 import java.util.List;
 
 import com.project.app.dto.LoginDto;
+import com.project.app.dto.AuthResponse;
 import com.project.app.models.User;
 
 public interface UserService {
-    public String login(LoginDto loginDto);
+    public AuthResponse login(LoginDto loginDto);
     public User getUsuario();
 
     User createUser(User user);

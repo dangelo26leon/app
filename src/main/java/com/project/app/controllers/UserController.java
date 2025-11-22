@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.app.dto.ApiResponse;
 import com.project.app.models.User;
 import com.project.app.services.UserService;
 
@@ -53,17 +54,37 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    @PutMapping
-    public ResponseEntity<User> updateUser(@PathVariable("id") Long id, @RequestBody User user) {
-        User updatedUser = userService.updateUser(user);
-        return new ResponseEntity<>(updatedUser,HttpStatus.OK);
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse> updateUser(@PathVariable Long id, @RequestBody User user) {
+        try {
+            user.setId(id);
+            User currentUser = userService.getUsuario();
+            
+            // Permitir que admin actualice cualquier usuario, o que cada usuario se actualice a sí mismo
+            if (!currentUser.getId().equals(id) && !currentUser.getRoles().stream()
+                .anyMatch(r -> r.getRol().getValue().equals("ROLE_ADMIN"))) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ApiResponse(false, "No tienes permiso para actualizar este usuario"));
+            }
+            
+            User updatedUser = userService.updateUser(user);
+            return ResponseEntity.ok(new ApiResponse(true, "Usuario actualizado correctamente", updatedUser));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiResponse(false, e.getMessage()));
+        }
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ApiResponse> deleteUser(@PathVariable Long id) {
+        try {
+            userService.deleteUser(id);
+            return ResponseEntity.ok(new ApiResponse(true, "Usuario eliminado correctamente"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiResponse(false, e.getMessage()));
+        }
     }
 
 

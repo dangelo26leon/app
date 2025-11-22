@@ -8,29 +8,42 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.project.app.dto.ApiResponse;
+
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<String> handleBadCredentials(BadCredentialsException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario o contraseña incorrectos");
+    public ResponseEntity<ApiResponse> handleBadCredentials(BadCredentialsException e) {
+        ApiResponse response = new ApiResponse(false, "Usuario o contraseña incorrectos");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<String> handleTokenExpired(ExpiredJwtException e) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("El token ha expirado, por favor inicia sesión de nuevo.");
+    public ResponseEntity<ApiResponse> handleTokenExpired(ExpiredJwtException e) {
+        ApiResponse response = new ApiResponse(false, "El token ha expirado, por favor inicia sesión de nuevo.");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 
-    @ExceptionHandler(SignatureException.class)
-    public ResponseEntity<String> handleSignature(SignatureException e) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Token inválido o modificado.");
+    @ExceptionHandler({SignatureException.class, JwtException.class})
+    public ResponseEntity<ApiResponse> handleSignature(Exception e) {
+        ApiResponse response = new ApiResponse(false, "Token inválido o modificado.");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiResponse> handleRuntime(RuntimeException e) {
+        ApiResponse response = new ApiResponse(false, e.getMessage() != null ? e.getMessage() : "Error interno del servidor");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleGeneral(Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocurrió un error: " + e.getMessage());
+    public ResponseEntity<ApiResponse> handleGeneral(Exception e) {
+        ApiResponse response = new ApiResponse(false, "Ocurrió un error: " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
 }

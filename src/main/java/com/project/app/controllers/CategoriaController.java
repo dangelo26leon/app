@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.app.models.Categoria;
+import com.project.app.dto.ApiResponse;
 import com.project.app.services.CategoriaService;
 
 @RestController
@@ -26,34 +27,62 @@ public class CategoriaController {
     private CategoriaService categoriaService;
 
     @GetMapping
-    public ResponseEntity<List<Categoria>> getAll() {
-        return ResponseEntity.ok(categoriaService.findAll());
+    public ResponseEntity<ApiResponse> getAll() {
+        try {
+            List<Categoria> categorias = categoriaService.findAll();
+            return ResponseEntity.ok(new ApiResponse(true, "Categorías obtenidas correctamente", categorias));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiResponse(false, e.getMessage()));
+        }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Categoria> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(categoriaService.findById(id));
+    public ResponseEntity<ApiResponse> getById(@PathVariable Long id) {
+        try {
+            Categoria categoria = categoriaService.findById(id);
+            return ResponseEntity.ok(new ApiResponse(true, "Categoría obtenida correctamente", categoria));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse(false, e.getMessage()));
+        }
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<Categoria> create(@RequestBody Categoria categoria) {
-        Categoria nuevaCategoria = categoriaService.save(categoria);
-        return new ResponseEntity<>(nuevaCategoria, HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse> create(@RequestBody Categoria categoria) {
+        try {
+            Categoria nuevaCategoria = categoriaService.save(categoria);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponse(true, "Categoría creada correctamente", nuevaCategoria));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponse(false, e.getMessage()));
+        }
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<Categoria> update(@PathVariable Long id, @RequestBody Categoria categoriaDetalles) {
-        Categoria categoriaActualizada = categoriaService.update(id, categoriaDetalles);
-        return ResponseEntity.ok(categoriaActualizada);
+    public ResponseEntity<ApiResponse> update(@PathVariable Long id, @RequestBody Categoria categoriaDetalles) {
+        try {
+            Categoria categoriaActualizada = categoriaService.update(id, categoriaDetalles);
+            return ResponseEntity.ok(new ApiResponse(true, "Categoría actualizada correctamente", categoriaActualizada));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponse(false, e.getMessage()));
+        }
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        categoriaService.delete(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ApiResponse> delete(@PathVariable Long id) {
+        try {
+            categoriaService.delete(id);
+            return ResponseEntity.ok(new ApiResponse(true, "Categoría eliminada correctamente"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse(false, e.getMessage()));
+        }
     }
 
 }

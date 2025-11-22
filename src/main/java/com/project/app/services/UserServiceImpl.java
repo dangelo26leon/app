@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.app.config.JwtTokenService;
 import com.project.app.dto.LoginDto;
+import com.project.app.dto.AuthResponse;
 import com.project.app.models.TipoRol;
 import com.project.app.models.User;
 import com.project.app.models.Rol;
@@ -44,7 +45,7 @@ public class UserServiceImpl implements UserService {
     private AuthenticationProvider authenticationProvider;
 
     @Override
-    public String login(LoginDto loginDto) {
+    public AuthResponse login(LoginDto loginDto) {
         final Authentication authentication = authenticationProvider.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDto.getUsername(),
                                                         loginDto.getPassword())
@@ -52,7 +53,14 @@ public class UserServiceImpl implements UserService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         final User user = userRepository.findByUsername(loginDto.getUsername());
 
-        return jwtTokenService.generateToken(user.getUsername(), user.getRoles());
+        String token = jwtTokenService.generateToken(user.getUsername(), user.getRoles());
+        
+        AuthResponse response = new AuthResponse();
+        response.setToken(token);
+        response.setUsername(user.getUsername());
+        response.setMessage("Login exitoso");
+        
+        return response;
     }
 
     @Override
